@@ -106,14 +106,44 @@ class MergeSort{
       
 }
 
+class InsertionSort{
+    constructor() {
+        this.arreglo = []
+        this.animacion = []
+    }
 
+    add(n) {
+        var i = 0;
+        while (i < n) {
+            this.arreglo.push(Math.random() * 800);
+            i++;
+        }
+    }
 
+    ordenar(){
+        for(var i=0;i<this.arreglo.length;i++){
+            let current = this.arreglo[i];
 
+            let j;
+            for(j=i-1;j>=0 && this.arreglo[j]>current; j--){
+                this.arreglo[j+1] = this.arreglo[j]
+                this.animacion.push([...this.arreglo])
+                
+            }
+            this.animacion.push([...this.arreglo])
+            this.arreglo[j+1] = current;
+            
+        }
+    }
+}
 
 const generar = document.getElementById("generar");
 const bubble = document.getElementById("bubble");
 const resetear = document.getElementById("resetear");
 const merge = document.getElementById("merge");
+const insertion = document.getElementById("insertion");
+
+
 
 const delay = async (ms = 1000) =>
   new Promise(resolve => setTimeout(resolve, ms))
@@ -121,6 +151,8 @@ const delay = async (ms = 1000) =>
 class Dibujar {
     constructor(n) {
         this.canvas = document.getElementById('tutorial');
+        this.canvas.width = 1800
+        this.canvas.height = 900
         this.context = this.canvas.getContext('2d');
         this.n = n;
         this.width = 1800;
@@ -130,6 +162,9 @@ class Dibujar {
         
         this.mm = new MergeSort()
         this.mm.add(n)
+
+        this.iss = new InsertionSort();
+        this.iss.add(n)
         
     }
     resetar(){
@@ -144,7 +179,7 @@ class Dibujar {
         for (var i=0;i<this.bb.arreglo.length;i++){
             //ctx.fillRect(origenX, origenY, anchoC, altoC);
             this.context.beginPath();
-            //this.context.fillStyle = "#"+Math.floor(Math.random()*16777215).toString(16);
+            //this.context.fillStyle = "#"+Math.floor(this.bb.arreglo[i]*15).toString(16);
             this.context.rect(inicio, 0, ancho, this.bb.arreglo[i]);
             this.context.stroke()
             inicio = inicio + ancho
@@ -163,6 +198,7 @@ class Dibujar {
             for(var i=0;i<arreglo[j].length;i++){
                 this.context.beginPath();
                 //this.context.fillStyle = "#"+Math.floor(Math.random()*16777215).toString(16);
+                //this.context.fillStyle = "#"+Math.floor(this.bb.arreglo[i]*100).toString(16);
                 this.context.rect(inicio, 0, ancho, arreglo[j][i]);
                 //podemos cambiar rect por fillRect?
                 this.context.stroke()
@@ -172,7 +208,7 @@ class Dibujar {
             }          
             //console.log("--")
             //definimos el delay i wea
-            await delay(0)
+            await delay(1)
         }
     } 
 
@@ -194,12 +230,20 @@ class Dibujar {
         this.segundoDibujo(animacion)
     }
 
+    ordenarInsertion(){
+        console.log("Se ordenará ->",this.iss.arreglo);
+        this.iss.ordenar()
+        
+        const animacion = this.iss.animacion;
+        this.segundoDibujo(animacion)
+    }
+
 
 }
 
 
 function Main(){
-    const cantidad = 5000
+    const cantidad = 100
     var correr = new Dibujar(cantidad);
     generar.addEventListener('click',()=>{
         correr.primerDibujo()
@@ -215,6 +259,10 @@ function Main(){
     merge.addEventListener('click',()=>{
         correr.ordenarMerge()
     })
+    insertion.addEventListener('click',()=>{
+        correr.ordenarInsertion()
+    })
 }
 
 Main()
+
